@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -49,20 +48,37 @@ public class MenuAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tvItemName = convertView.findViewById(R.id.tvItemName);
             holder.tvItemPrice = convertView.findViewById(R.id.tvItemPrice);
+            holder.tvQuantity = convertView.findViewById(R.id.tvQuantity);
+            holder.btnIncrease = convertView.findViewById(R.id.btnIncrease);
+            holder.btnDecrease = convertView.findViewById(R.id.btnDecrease);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        // Kiểm tra xem holder có null không
-        if (holder.tvItemName == null || holder.tvItemPrice == null) {
-            Log.e("MenuAdapter", "TextView is null! Check ID in XML.");
+        // Kiểm tra ID hợp lệ
+        if (holder.tvItemName == null || holder.tvItemPrice == null || holder.tvQuantity == null || holder.btnIncrease == null || holder.btnDecrease == null) {
+            Log.e("MenuAdapter", "ViewHolder contains null components. Check XML IDs.");
+            return convertView;
         }
 
         // Lấy dữ liệu từ danh sách
         MenuItem item = menuItems.get(position);
         holder.tvItemName.setText(item.getName());
-        holder.tvItemPrice.setText(String.format("%,f VNĐ", item.getPrice()));
+        holder.tvItemPrice.setText(String.format("%,.2f VNĐ", item.getPrice()));
+        holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+
+        // Xử lý nút Tăng (+)
+        holder.btnIncrease.setOnClickListener(v -> {
+            item.increaseQuantity();
+            holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        });
+
+        // Xử lý nút Giảm (-)
+        holder.btnDecrease.setOnClickListener(v -> {
+            item.decreaseQuantity();
+            holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        });
 
         return convertView;
     }
@@ -70,7 +86,8 @@ public class MenuAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView tvItemName;
         TextView tvItemPrice;
+        TextView tvQuantity;
+        Button btnIncrease;
+        Button btnDecrease;
     }
-
-
 }

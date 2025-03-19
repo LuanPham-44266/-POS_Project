@@ -8,10 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pos_database";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Bảng Menu
     private static final String TABLE_MENU = "menu";
@@ -24,6 +25,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ORDER_ID = "order_id";
     private static final String COLUMN_TOTAL_PRICE = "total_price";
     private static final String COLUMN_DATE_TIME = "date_time";
+
+    // Bảng Chi tiết Đơn hàng
+    private static final String TABLE_ORDER_DETAILS = "order_details";
+    private static final String COLUMN_DETAIL_ID = "detail_id";
+    private static final String COLUMN_DETAIL_ORDER_ID = "order_id";
+    private static final String COLUMN_DETAIL_MENU_ID = "menu_id";
+    private static final String COLUMN_DETAIL_QUANTITY = "quantity";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,22 +46,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_MENU_PRICE + " REAL)";
         db.execSQL(createMenuTable);
 
-        // Tạo bảng Lịch sử đơn hàng
+        // Tạo bảng Đơn hàng
         String createOrderTable = "CREATE TABLE " + TABLE_ORDERS + " ("
                 + COLUMN_ORDER_ID + " TEXT PRIMARY KEY, "
                 + COLUMN_TOTAL_PRICE + " REAL, "
                 + COLUMN_DATE_TIME + " TEXT)";
         db.execSQL(createOrderTable);
+
+        // Tạo bảng Chi tiết Đơn hàng
+        String createOrderDetailsTable = "CREATE TABLE " + TABLE_ORDER_DETAILS + " ("
+                + COLUMN_DETAIL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_DETAIL_ORDER_ID + " TEXT, "
+                + COLUMN_DETAIL_MENU_ID + " INTEGER, "
+                + COLUMN_DETAIL_QUANTITY + " INTEGER, "
+                + "FOREIGN KEY(" + COLUMN_DETAIL_ORDER_ID + ") REFERENCES " + TABLE_ORDERS + "(" + COLUMN_ORDER_ID + "), "
+                + "FOREIGN KEY(" + COLUMN_DETAIL_MENU_ID + ") REFERENCES " + TABLE_MENU + "(" + COLUMN_MENU_ID + "))";
+        db.execSQL(createOrderDetailsTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MENU);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAILS);
         onCreate(db);
     }
 
-    // **📌 2. Chức năng Thêm món vào menu**
+    // **📌 1. Thêm món vào menu**
     public void addMenuItem(String name, double price) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -63,7 +82,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    // **📌 3. Lấy danh sách món từ Menu**
+    // **📌 2. Cập nhật món trong menu**
+    public void updateMenuItem(int id, String newName, double newPrice) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MENU_NAME, newName);
+        values.put(COLUMN_MENU_PRICE, newPrice);
+        db.update(TABLE_MENU, values, COLUMN_MENU_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    // **📌 3. Xóa món trong menu**
+    public void deleteMenuItem(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MENU, COLUMN_MENU_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    // **📌 4. Lấy danh sách món từ Menu**
     public List<MenuItem> getAllMenuItems() {
         List<MenuItem> menuList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -74,8 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int id = cursor.getInt(0);
                 String name = cursor.getString(1);
                 double price = cursor.getDouble(2);
-                menuList.add(new MenuItem(name, price)); // 🔥 Chỉ truyền 2 tham số
-
+                menuList.add(new MenuItem(id, name, price)); // ✅ Đã thêm ID vào MenuItem
             } while (cursor.moveToNext());
         }
 
@@ -84,18 +119,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return menuList;
     }
 
-    // **📌 4. Lưu đơn hàng vào lịch sử**
+    // **📌 5. Lưu đơn hàng vào lịch sử (có chi tiết món)**
+//    public void saveOrder(String orderId, double totalPrice, String dateTime) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        try {
+//            db.beginTransaction();
+//
+//            // Lưu thông tin đơn hàng
+//            ContentValues orderValues = new ContentValues();
+//            orderValues.put(COLUMN_ORDER_ID, orderId);
+//            orderValues.put(COLUMN_TOTAL_PRICE, totalPrice);
+//            orderValues.put(COLUMN_DATE_TIME, dateTime);
+//            db.insert(TABLE_ORDERS, null, orderValues);
+//
+//            // Lưu từng món vào order_details
+//            for (Map.Entry<MenuItem, Integer> entry : cartItems.entrySet()) {
+//                ContentValues detailValues = new ContentValues();
+//                detailValues.put(COLUMN_DETAIL_ORDER_ID, orderId);
+//                detailValues.put(COLUMN_DETAIL_QUANTITY, entry.getValue());
+//                db.insert(TABLE_ORDER_DETAILS, null, detailValues);
+//            }
+//
+//            db.setTransactionSuccessful();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            db.endTransaction();
+//            db.close();
+//        }
+//    }
     public void saveOrder(String orderId, double totalPrice, String dateTime) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ORDER_ID, orderId);
-        values.put(COLUMN_TOTAL_PRICE, totalPrice);
-        values.put(COLUMN_DATE_TIME, dateTime);
-        db.insert(TABLE_ORDERS, null, values);
-        db.close();
+
+        try {
+            db.beginTransaction();
+
+            // ✅ Lưu thông tin đơn hàng
+            ContentValues orderValues = new ContentValues();
+            orderValues.put(COLUMN_ORDER_ID, orderId);
+            orderValues.put(COLUMN_TOTAL_PRICE, totalPrice);
+            orderValues.put(COLUMN_DATE_TIME, dateTime);
+            db.insert(TABLE_ORDERS, null, orderValues);
+
+            // ✅ Lấy danh sách món từ giỏ hàng (CartManager)
+            List<CartItem> cartItems = CartManager.getInstance().getCartItems();
+
+            // ✅ Lưu từng món vào order_details
+            for (CartItem cartItem : cartItems) {
+                ContentValues detailValues = new ContentValues();
+                detailValues.put(COLUMN_DETAIL_ORDER_ID, orderId);
+                detailValues.put(COLUMN_DETAIL_MENU_ID, cartItem.getMenuItem().getId()); // Lấy ID của món
+                detailValues.put(COLUMN_DETAIL_QUANTITY, cartItem.getQuantity()); // Lấy số lượng
+                db.insert(TABLE_ORDER_DETAILS, null, detailValues);
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
     }
 
-    // **📌 5. Lấy danh sách đơn hàng từ lịch sử**
+
+
+    // **📌 6. Lấy danh sách đơn hàng từ lịch sử**
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -114,4 +204,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return orders;
     }
+
+    // **📌 7. Lấy chi tiết món từ đơn hàng**
+    public List<OrderDetail> getOrderDetails(String orderId) {
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT menu_id, quantity FROM " + TABLE_ORDER_DETAILS + " WHERE order_id=?", new String[]{orderId});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int menuId = cursor.getInt(0);
+                int quantity = cursor.getInt(1);
+                orderDetails.add(new OrderDetail(orderId, menuId, quantity));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return orderDetails;
+    }
+
 }

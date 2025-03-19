@@ -11,13 +11,11 @@ import java.util.List;
 
 public class CartAdapter extends BaseAdapter {
     private Context context;
-    private List<MenuItem> cartItems;
-    private CartManager cartManager;
+    private List<CartItem> cartItems;
 
-    public CartAdapter(Context context, List<MenuItem> cartItems) {
+    public CartAdapter(Context context, List<CartItem> cartItems) {
         this.context = context;
         this.cartItems = cartItems;
-        this.cartManager = CartManager.getInstance();
     }
 
     @Override
@@ -41,14 +39,14 @@ public class CartAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_cart, parent, false);
         }
 
-        MenuItem menuItem = cartItems.get(position);
+        CartItem cartItem = cartItems.get(position);
         TextView tvName = convertView.findViewById(R.id.tvName);
         TextView tvPrice = convertView.findViewById(R.id.tvPrice);
         TextView tvQuantity = convertView.findViewById(R.id.tvQuantity);
 
-        tvName.setText(menuItem.getName());
-        tvPrice.setText(String.format("%.0f đ", menuItem.getPrice()));
-        tvQuantity.setText("SL: " + cartManager.getQuantity(menuItem));
+        tvName.setText(cartItem.getMenuItem().getName());
+        tvPrice.setText(String.format("%.0f đ", cartItem.getMenuItem().getPrice()));
+        tvQuantity.setText("SL: " + cartItem.getQuantity());
 
         return convertView;
     }
