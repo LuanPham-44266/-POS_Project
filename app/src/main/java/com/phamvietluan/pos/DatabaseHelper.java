@@ -19,6 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_MENU_ID = "id";
     private static final String COLUMN_MENU_NAME = "name";
     private static final String COLUMN_MENU_PRICE = "price";
+    private static final String COLUMN_MENU_IMAGE = "image";
 
     // Bảng Đơn Hàng
     private static final String TABLE_ORDERS = "orders";
@@ -33,6 +34,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DETAIL_MENU_ID = "menu_id";
     private static final String COLUMN_DETAIL_QUANTITY = "quantity";
 
+    // **📌 Bảng Người dùng (Users)**
+    private static final String TABLE_USERS = "users";
+    private static final String COLUMN_USER_ID = "id";
+    private static final String COLUMN_USERNAME = "username";
+    private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_ROLE = "role"; // 'admin' hoặc 'staff'
+
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -43,7 +52,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createMenuTable = "CREATE TABLE " + TABLE_MENU + " ("
                 + COLUMN_MENU_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_MENU_NAME + " TEXT, "
-                + COLUMN_MENU_PRICE + " REAL)";
+                + COLUMN_MENU_PRICE + " REAL, "
+                + COLUMN_MENU_IMAGE + " TEXT)"; // ✅ Thêm dấu `,` và khoảng trắng
+        ;
+
         db.execSQL(createMenuTable);
 
         // Tạo bảng Đơn hàng
@@ -62,6 +74,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + COLUMN_DETAIL_ORDER_ID + ") REFERENCES " + TABLE_ORDERS + "(" + COLUMN_ORDER_ID + "), "
                 + "FOREIGN KEY(" + COLUMN_DETAIL_MENU_ID + ") REFERENCES " + TABLE_MENU + "(" + COLUMN_MENU_ID + "))";
         db.execSQL(createOrderDetailsTable);
+        // **📌 Tạo bảng Người dùng**
+        String createUserTable = "CREATE TABLE " + TABLE_USERS + " ("
+                + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_USERNAME + " TEXT UNIQUE, "
+                + COLUMN_PASSWORD + " TEXT, "
+                + COLUMN_ROLE + " TEXT)";
+        db.execSQL(createUserTable);
+
+        // **📌 Thêm tài khoản Admin mặc định**
+        addAdminAccount(db);
     }
 
     @Override
@@ -69,18 +91,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MENU);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAILS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         onCreate(db);
     }
 
     // **📌 1. Thêm món vào menu**
-    public void addMenuItem(String name, double price) {
+    public boolean addMenuItem(String name, double price, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_MENU_NAME, name);
         values.put(COLUMN_MENU_PRICE, price);
-        db.insert(TABLE_MENU, null, values);
+        values.put(COLUMN_MENU_IMAGE, imagePath);
+
+        long result = db.insert(TABLE_MENU, null, values);
         db.close();
+
+        return result != -1; // ✅ Nếu `insert()` thành công, trả về `true`, ngược lại `false`
     }
+
 
     // **📌 2. Cập nhật món trong menu**
     public void updateMenuItem(int id, String newName, double newPrice) {
@@ -117,6 +145,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return menuList;
+    }
+    // **📌 Thêm tài khoản Admin mặc định**
+    private void addAdminAccount(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USERNAME, "admin");
+        values.put(COLUMN_PASSWORD, "123456"); // ⚠️ Mật khẩu này nên được mã hóa
+        values.put(COLUMN_ROLE, "admin");
+        db.insert(TABLE_USERS, null, values);
+    }
+
+    // **📌 Kiểm tra đăng nhập**
+    public boolean checkLogin(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND password = ?", new String[]{username, password});
+
+        boolean isLoggedIn = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return isLoggedIn;
+    }
+
+    // **📌 Kiểm tra người dùng có phải Admin không**
+    public boolean isAdmin(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND role = 'admin'", new String[]{username});
+
+        boolean isAdmin = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return isAdmin;
     }
 
     // **📌 5. Lưu đơn hàng vào lịch sử (có chi tiết món)**
