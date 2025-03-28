@@ -1,25 +1,29 @@
 package com.phamvietluan.pos;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.List;
 
 public class MenuAdapter extends BaseAdapter {
-    private Context context;
-    private List<MenuItem> menuItems;
-    private CartManager cartManager;
+    private final Context context;
+    private final List<MenuItem> menuItems;
+    private final boolean isDeleteMode; // Biến kiểm tra có đang ở DeleteActivity không
+    private final OnItemDeleteListener deleteListener;
 
-    public MenuAdapter(Context context, List<MenuItem> menuItems) {
+    public interface OnItemDeleteListener {
+        void onDelete(int itemId);
+    }
+
+    public MenuAdapter(Context context, List<MenuItem> menuItems, boolean isDeleteMode, OnItemDeleteListener deleteListener) {
         this.context = context;
         this.menuItems = menuItems;
-        this.cartManager = CartManager.getInstance();
+        this.isDeleteMode = isDeleteMode;
+        this.deleteListener = deleteListener;
     }
 
     @Override
@@ -51,15 +55,10 @@ public class MenuAdapter extends BaseAdapter {
             holder.tvQuantity = convertView.findViewById(R.id.tvQuantity);
             holder.btnIncrease = convertView.findViewById(R.id.btnIncrease);
             holder.btnDecrease = convertView.findViewById(R.id.btnDecrease);
+            holder.btnDelete = convertView.findViewById(R.id.btnDelete); // Nút xóa
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
-        }
-
-        // Kiểm tra ID hợp lệ
-        if (holder.tvItemName == null || holder.tvItemPrice == null || holder.tvQuantity == null || holder.btnIncrease == null || holder.btnDecrease == null) {
-            Log.e("MenuAdapter", "ViewHolder contains null components. Check XML IDs.");
-            return convertView;
         }
 
         // Lấy dữ liệu từ danh sách
@@ -67,6 +66,18 @@ public class MenuAdapter extends BaseAdapter {
         holder.tvItemName.setText(item.getName());
         holder.tvItemPrice.setText(String.format("%,.2f VNĐ", item.getPrice()));
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+
+        // Nếu ở chế độ xóa, hiển thị nút "Xóa", ẩn nút "+" và "-"
+        if (isDeleteMode) {
+            holder.btnDelete.setVisibility(View.VISIBLE);
+            holder.btnIncrease.setVisibility(View.GONE);
+            holder.btnDecrease.setVisibility(View.GONE);
+            holder.btnDelete.setOnClickListener(v -> deleteListener.onDelete(item.getId()));
+        } else {
+            holder.btnDelete.setVisibility(View.GONE);
+            holder.btnIncrease.setVisibility(View.VISIBLE);
+            holder.btnDecrease.setVisibility(View.VISIBLE);
+        }
 
         // Xử lý nút Tăng (+)
         holder.btnIncrease.setOnClickListener(v -> {
@@ -89,5 +100,6 @@ public class MenuAdapter extends BaseAdapter {
         TextView tvQuantity;
         Button btnIncrease;
         Button btnDecrease;
+        Button btnDelete; // Thêm nút xóa
     }
 }

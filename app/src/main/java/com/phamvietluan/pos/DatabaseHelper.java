@@ -83,7 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createUserTable);
 
         // **📌 Thêm tài khoản Admin mặc định**
-        addAdminAccount(db);
+//        addAdminAccount(db);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // **📌 3. Xóa món trong menu**
     public void deleteMenuItem(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_MENU, COLUMN_MENU_ID + "=?", new String[]{String.valueOf(id)});
+        db.delete(TABLE_MENU, COLUMN_MENU_ID + " = ?", new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -146,36 +146,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return menuList;
     }
-    // **📌 Thêm tài khoản Admin mặc định**
-    private void addAdminAccount(SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USERNAME, "admin");
-        values.put(COLUMN_PASSWORD, "123456"); // ⚠️ Mật khẩu này nên được mã hóa
-        values.put(COLUMN_ROLE, "admin");
-        db.insert(TABLE_USERS, null, values);
-    }
-
-    // **📌 Kiểm tra đăng nhập**
-    public boolean checkLogin(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND password = ?", new String[]{username, password});
-
-        boolean isLoggedIn = cursor.moveToFirst();
-        cursor.close();
-        db.close();
-        return isLoggedIn;
-    }
-
-    // **📌 Kiểm tra người dùng có phải Admin không**
-    public boolean isAdmin(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND role = 'admin'", new String[]{username});
-
-        boolean isAdmin = cursor.moveToFirst();
-        cursor.close();
-        db.close();
-        return isAdmin;
-    }
+//    // **📌 Thêm tài khoản Admin mặc định**
+//    private void addAdminAccount(SQLiteDatabase db) {
+//        ContentValues values = new ContentValues();
+//        values.put(COLUMN_USERNAME, "admin");
+//        values.put(COLUMN_PASSWORD, "123456"); // ⚠️ Mật khẩu này nên được mã hóa
+//        values.put(COLUMN_ROLE, "admin");
+//        db.insert(TABLE_USERS, null, values);
+//    }
+//
+//    // **📌 Kiểm tra đăng nhập**
+//    public boolean checkLogin(String username, String password) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND password = ?", new String[]{username, password});
+//
+//        boolean isLoggedIn = cursor.moveToFirst();
+//        cursor.close();
+//        db.close();
+//        return isLoggedIn;
+//    }
+//
+//    // **📌 Kiểm tra người dùng có phải Admin không**
+//    public boolean isAdmin(String username) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND role = 'admin'", new String[]{username});
+//
+//        boolean isAdmin = cursor.moveToFirst();
+//        cursor.close();
+//        db.close();
+//        return isAdmin;
+//    }
 
     // **📌 5. Lưu đơn hàng vào lịch sử (có chi tiết món)**
 //    public void saveOrder(String orderId, double totalPrice, String dateTime) {
@@ -207,6 +207,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //            db.close();
 //        }
 //    }
+
     public void saveOrder(String orderId, double totalPrice, String dateTime) {
         SQLiteDatabase db = this.getWritableDatabase();
 

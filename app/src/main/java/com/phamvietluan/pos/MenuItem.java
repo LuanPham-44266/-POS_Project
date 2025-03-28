@@ -6,6 +6,7 @@ public class MenuItem {
     private double price;
     private int quantity;
     public MenuItem(int id,String name, double price) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.quantity =0 ;

@@ -20,30 +20,32 @@ class CartManager {
         return instance;
     }
 
-    // **📌 Thêm món vào giỏ hàng với số lượng**
-    public void addItem(MenuItem item, int quantity) {  // Truyền quantity từ bên ngoài
+    public void addItem(MenuItem item, int quantity) {
         if (item == null || quantity <= 0) return;
 
         for (CartItem cartItem : cartItems) {
             if (cartItem.getMenuItem().getId() == item.getId()) {
-                cartItem.setQuantity(cartItem.getQuantity() + quantity); // ✅ Cập nhật số lượng
+                cartItem.setQuantity(cartItem.getQuantity() + quantity);
+                Log.d("CartManager", "Cập nhật SL món: " + item.getName() + " -> " + cartItem.getQuantity());
                 return;
             }
         }
-        cartItems.add(new CartItem(item, quantity)); // ✅ Thêm mới nếu chưa có
+
+        cartItems.add(new CartItem(item, quantity));
+        Log.d("CartManager", "Thêm món: " + item.getName() + " SL: " + quantity);
     }
 
 
 
-    // **📌 Giảm số lượng hoặc xóa món nếu số lượng = 1**
     public void removeItem(MenuItem item) {
-        if (item == null) return; // Tránh lỗi null
+        if (item == null) return;
 
         for (int i = 0; i < cartItems.size(); i++) {
             CartItem cartItem = cartItems.get(i);
             if (cartItem.getMenuItem().getId() == item.getId()) {
                 cartItem.decreaseQuantity();
-                Log.d("CartManager", "Giảm số lượng món: " + item.getName() + " -> " + cartItem.getQuantity());
+                Log.d("CartManager", "Giảm món: " + item.getName() + " -> SL: " + cartItem.getQuantity());
+
                 if (cartItem.getQuantity() <= 0) {
                     cartItems.remove(i);
                     Log.d("CartManager", "Xóa món khỏi giỏ: " + item.getName());
@@ -53,7 +55,6 @@ class CartManager {
         }
     }
 
-    // **📌 Lấy tổng tiền của giỏ hàng**
     public double getTotalPrice() {
         double total = 0;
         for (CartItem cartItem : cartItems) {
@@ -72,7 +73,6 @@ class CartManager {
         return new ArrayList<>(cartItems);
     }
 
-    // **📌 Xóa toàn bộ giỏ hàng sau khi thanh toán**
     public void clearCart() {
         cartItems.clear();
         Log.d("CartManager", "Giỏ hàng đã được xóa.");

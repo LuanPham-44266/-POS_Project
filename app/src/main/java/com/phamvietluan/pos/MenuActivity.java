@@ -38,7 +38,7 @@ public class MenuActivity extends AppCompatActivity {
 
         // Khởi tạo danh sách món & Adapter
         menuItems = new ArrayList<>();
-        menuAdapter = new MenuAdapter(this, menuItems);
+        menuAdapter = new MenuAdapter(this, menuItems,false,null);
         lvMenu.setAdapter(menuAdapter);
 
         // 🔥 Tải menu từ database
@@ -61,11 +61,11 @@ public class MenuActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 🔥 Thêm món mới (Chỉ hiển thị nếu là Admin)
-        btnAddItem.setOnClickListener(v -> {
-            Intent intent = new Intent(MenuActivity.this, AddItemActivity.class);
-            startActivity(intent);
-        });
+//        // 🔥 Thêm món mới (Chỉ hiển thị nếu là Admin)
+//        btnAddItem.setOnClickListener(v -> {
+//            Intent intent = new Intent(MenuActivity.this, AddItemActivity.class);
+//            startActivity(intent);
+//        });
     }
 
     // ✅ Tải danh sách món từ database và cập nhật ListView
