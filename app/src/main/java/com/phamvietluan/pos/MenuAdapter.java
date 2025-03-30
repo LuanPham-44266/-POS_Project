@@ -1,12 +1,16 @@
 package com.phamvietluan.pos;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import java.io.File;
 import java.util.List;
 
 public class MenuAdapter extends BaseAdapter {
@@ -50,6 +54,7 @@ public class MenuAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_item_menu, parent, false);
 
             holder = new ViewHolder();
+            holder.imgItem = convertView.findViewById(R.id.imgItem);
             holder.tvItemName = convertView.findViewById(R.id.tvItemName);
             holder.tvItemPrice = convertView.findViewById(R.id.tvItemPrice);
             holder.tvQuantity = convertView.findViewById(R.id.tvQuantity);
@@ -65,6 +70,31 @@ public class MenuAdapter extends BaseAdapter {
         holder.tvItemName.setText(item.getName());
         holder.tvItemPrice.setText(String.format("%,.0f VNĐ", item.getPrice()));
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        
+        // Hiển thị ảnh từ đường dẫn
+        try {
+            String imagePath = item.getImagePath();
+            if (imagePath != null && !imagePath.isEmpty()) {
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    // Hiển thị ảnh từ file nội bộ
+                    holder.imgItem.setImageURI(Uri.fromFile(imageFile));
+                    Log.d("MenuAdapter", "Hiển thị ảnh từ file nội bộ: " + imagePath);
+                } else {
+                    // Nếu file không tồn tại, hiển thị ảnh mặc định
+                    holder.imgItem.setImageResource(R.drawable.ic_tea);
+                    Log.d("MenuAdapter", "File ảnh không tồn tại: " + imagePath);
+                }
+            } else {
+                // Nếu không có đường dẫn ảnh, hiển thị ảnh mặc định
+                holder.imgItem.setImageResource(R.drawable.ic_tea);
+                Log.d("MenuAdapter", "Không có đường dẫn ảnh cho " + item.getName());
+            }
+        } catch (Exception e) {
+            // Nếu có lỗi, hiển thị ảnh mặc định
+            holder.imgItem.setImageResource(R.drawable.ic_tea);
+            Log.e("MenuAdapter", "Lỗi khi hiển thị ảnh: " + e.getMessage());
+        }
 
         // Nếu ở chế độ xóa, hiển thị nút "Xóa", ẩn nút "+" và "-"
         if (isDeleteMode) {
@@ -100,11 +130,12 @@ public class MenuAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
+        ImageView imgItem;
         TextView tvItemName;
         TextView tvItemPrice;
         TextView tvQuantity;
         Button btnIncrease;
         Button btnDecrease;
-        Button btnDelete; // Thêm nút xóa
+        Button btnDelete; // Nút xóa
     }
 }

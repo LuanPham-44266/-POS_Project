@@ -1,6 +1,7 @@
 package com.phamvietluan.pos;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -75,7 +76,10 @@ public class CartActivity extends AppCompatActivity {
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
         databaseHelper.saveOrder(orderId, totalPrice, dateTime);
+        
         Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
+        
+        BillPrintHelper.printBill(this, orderId, totalPrice, dateTime, cartItems);
 
         cartManager.clearCart();
         cartItems.clear();

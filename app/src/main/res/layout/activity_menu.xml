@@ -3,14 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#E653BD">
 
     <!-- Danh sách món -->
     <ListView
         android:id="@+id/lvMenu"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:clipToPadding="false"
+        android:paddingVertical="8dp"
+        android:scrollbarStyle="outsideOverlay" />
 
 <!--    &lt;!&ndash; Thanh điều hướng &ndash;&gt;-->
 <!--    <LinearLayout-->
@@ -49,22 +55,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:padding="8dp">
 
         <Button
             android:id="@+id/btnExit"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Thoát"
-            android:padding="10dp" />
+            android:padding="12dp"
+            android:backgroundTint="#3A1F5D"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/btnCheckout"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
             android:layout_height="wrap_content"
             android:text="Thanh Toán"
-            android:padding="10dp"
-            android:layout_marginStart="20dp" />
+            android:padding="12dp"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="#FFDE59"
+            android:textColor="#3A1F5D" />
 
     </LinearLayout>
 

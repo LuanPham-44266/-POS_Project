@@ -12,10 +12,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Thoát"
-        android:textSize="16sp"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="16dp"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
+
+    <!-- Layout chứa các nút -->
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_below="@id/btnExit"
+        android:layout_marginBottom="16dp">
+        
+        <!-- Các nút sẽ được thêm vào đây -->
+        
+    </LinearLayout>
 
     <!-- Ảnh món -->
     <ImageView
@@ -43,11 +56,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Tên món"
-        android:inputType="text"
+        android:inputType="textPersonName|textCapSentences|textMultiLine"
+        android:imeOptions="actionNext"
         android:minHeight="48dp"
         android:padding="10dp"
         android:background="@android:drawable/editbox_background"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:importantForAutofill="no" />
 
     <!-- Nhập giá món -->
     <EditText

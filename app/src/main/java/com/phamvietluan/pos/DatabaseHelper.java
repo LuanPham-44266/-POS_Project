@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +49,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Đảm bảo cơ sở dữ liệu hỗ trợ UTF-8
+        db.execSQL("PRAGMA encoding = 'UTF-8'");
+        
         // Tạo bảng Menu
         String createMenuTable = "CREATE TABLE " + TABLE_MENU + " ("
                 + COLUMN_MENU_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_MENU_NAME + " TEXT, "
+                + COLUMN_MENU_NAME + " TEXT COLLATE NOCASE, "
                 + COLUMN_MENU_PRICE + " REAL, "
-                + COLUMN_MENU_IMAGE + " TEXT)"; // ✅ Thêm dấu `,` và khoảng trắng
-        ;
-
+                + COLUMN_MENU_IMAGE + " TEXT)";
+        
         db.execSQL(createMenuTable);
 
         // Tạo bảng Đơn hàng
@@ -98,15 +101,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // **📌 1. Thêm món vào menu**
     public boolean addMenuItem(String name, double price, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_MENU_NAME, name);
-        values.put(COLUMN_MENU_PRICE, price);
-        values.put(COLUMN_MENU_IMAGE, imagePath);
+        try {
+            ContentValues values = new ContentValues();
+            // Đảm bảo lưu trữ tiếng Việt đúng cách (UTF-8)
+            values.put(COLUMN_MENU_NAME, name);
+            values.put(COLUMN_MENU_PRICE, price);
+            values.put(COLUMN_MENU_IMAGE, imagePath);
 
-        long result = db.insert(TABLE_MENU, null, values);
-        db.close();
-
-        return result != -1; // ✅ Nếu `insert()` thành công, trả về `true`, ngược lại `false`
+            long result = db.insert(TABLE_MENU, null, values);
+            Log.d("DatabaseHelper", "Thêm món: " + name + ", Kết quả: " + result);
+            return result != -1; // ✅ Nếu `insert()` thành công, trả về `true`, ngược lại `false`
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi thêm món: " + e.getMessage());
+            return false;
+        } finally {
+            db.close();
+        }
     }
 
 
@@ -138,7 +148,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int id = cursor.getInt(0);
                 String name = cursor.getString(1);
                 double price = cursor.getDouble(2);
-                menuList.add(new MenuItem(id, name, price)); // ✅ Đã thêm ID vào MenuItem
+                String imagePath = cursor.getString(3); // Lấy đường dẫn ảnh
+                
+                // Tạo MenuItem với đường dẫn ảnh
+                MenuItem item = new MenuItem(id, name, price, imagePath);
+                menuList.add(item);
+                
+                // Log để debug
+                Log.d("DatabaseHelper", "Đọc món: " + name + ", ID: " + id + ", Ảnh: " + imagePath);
             } while (cursor.moveToNext());
         }
 
@@ -178,63 +195,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //    }
 
     // **📌 5. Lưu đơn hàng vào lịch sử (có chi tiết món)**
-//    public void saveOrder(String orderId, double totalPrice, String dateTime) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        try {
-//            db.beginTransaction();
-//
-//            // Lưu thông tin đơn hàng
-//            ContentValues orderValues = new ContentValues();
-//            orderValues.put(COLUMN_ORDER_ID, orderId);
-//            orderValues.put(COLUMN_TOTAL_PRICE, totalPrice);
-//            orderValues.put(COLUMN_DATE_TIME, dateTime);
-//            db.insert(TABLE_ORDERS, null, orderValues);
-//
-//            // Lưu từng món vào order_details
-//            for (Map.Entry<MenuItem, Integer> entry : cartItems.entrySet()) {
-//                ContentValues detailValues = new ContentValues();
-//                detailValues.put(COLUMN_DETAIL_ORDER_ID, orderId);
-//                detailValues.put(COLUMN_DETAIL_QUANTITY, entry.getValue());
-//                db.insert(TABLE_ORDER_DETAILS, null, detailValues);
-//            }
-//
-//            db.setTransactionSuccessful();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            db.endTransaction();
-//            db.close();
-//        }
-//    }
-
     public void saveOrder(String orderId, double totalPrice, String dateTime) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
             db.beginTransaction();
+            Log.d("DatabaseHelper", "Bắt đầu lưu đơn hàng: ID=" + orderId + ", Giá=" + totalPrice);
 
             // ✅ Lưu thông tin đơn hàng
             ContentValues orderValues = new ContentValues();
             orderValues.put(COLUMN_ORDER_ID, orderId);
             orderValues.put(COLUMN_TOTAL_PRICE, totalPrice);
             orderValues.put(COLUMN_DATE_TIME, dateTime);
-            db.insert(TABLE_ORDERS, null, orderValues);
+            long orderRowId = db.insert(TABLE_ORDERS, null, orderValues);
+            
+            if (orderRowId == -1) {
+                Log.e("DatabaseHelper", "Lỗi: Không thể lưu thông tin đơn hàng");
+                return;
+            }
+            
+            Log.d("DatabaseHelper", "Đã lưu thông tin đơn hàng. Kết quả insert: " + orderRowId);
 
             // ✅ Lấy danh sách món từ giỏ hàng (CartManager)
             List<CartItem> cartItems = CartManager.getInstance().getCartItems();
+            
+            if (cartItems == null || cartItems.isEmpty()) {
+                Log.e("DatabaseHelper", "Lỗi: Giỏ hàng trống hoặc null");
+                return;
+            }
+            
+            Log.d("DatabaseHelper", "Số món trong đơn hàng: " + cartItems.size());
 
             // ✅ Lưu từng món vào order_details
             for (CartItem cartItem : cartItems) {
+                if (cartItem == null || cartItem.getMenuItem() == null) {
+                    Log.e("DatabaseHelper", "Lỗi: CartItem hoặc MenuItem null");
+                    continue; // Bỏ qua item này, tiếp tục với item khác
+                }
+                
                 ContentValues detailValues = new ContentValues();
                 detailValues.put(COLUMN_DETAIL_ORDER_ID, orderId);
                 detailValues.put(COLUMN_DETAIL_MENU_ID, cartItem.getMenuItem().getId()); // Lấy ID của món
                 detailValues.put(COLUMN_DETAIL_QUANTITY, cartItem.getQuantity()); // Lấy số lượng
-                db.insert(TABLE_ORDER_DETAILS, null, detailValues);
+                long detailRowId = db.insert(TABLE_ORDER_DETAILS, null, detailValues);
+                
+                if (detailRowId == -1) {
+                    Log.e("DatabaseHelper", "Lỗi: Không thể lưu chi tiết món: " + 
+                        (cartItem.getMenuItem() != null ? cartItem.getMenuItem().getName() : "null"));
+                } else {
+                    Log.d("DatabaseHelper", "Đã lưu chi tiết món: " + cartItem.getMenuItem().getName() 
+                        + ", SL: " + cartItem.getQuantity() + ", Kết quả insert: " + detailRowId);
+                }
             }
 
             db.setTransactionSuccessful();
+            Log.d("DatabaseHelper", "Lưu đơn hàng thành công!");
         } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi lưu đơn hàng: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.endTransaction();
@@ -242,45 +259,156 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-
-
     // **📌 6. Lấy danh sách đơn hàng từ lịch sử**
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_ORDERS + " ORDER BY " + COLUMN_DATE_TIME + " DESC", null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                String orderId = cursor.getString(0);
-                double totalPrice = cursor.getDouble(1);
-                String dateTime = cursor.getString(2);
-                orders.add(new Order(orderId, totalPrice, dateTime));
-            } while (cursor.moveToNext());
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        
+        try {
+            db = this.getReadableDatabase();
+            
+            if (db == null) {
+                Log.e("DatabaseHelper", "Không thể mở cơ sở dữ liệu để đọc");
+                return orders;
+            }
+            
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_ORDERS + " ORDER BY " + COLUMN_DATE_TIME + " DESC", null);
+            
+            Log.d("DatabaseHelper", "Đang đọc lịch sử đơn hàng...");
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    try {
+                        String orderId = cursor.getString(cursor.getColumnIndex(COLUMN_ORDER_ID));
+                        double totalPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_PRICE));
+                        String dateTime = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_TIME));
+                        
+                        orders.add(new Order(orderId, totalPrice, dateTime));
+                        Log.d("DatabaseHelper", "Đọc đơn hàng: ID=" + orderId + ", Giá=" + totalPrice + ", Ngày=" + dateTime);
+                    } catch (Exception e) {
+                        Log.e("DatabaseHelper", "Lỗi khi đọc bản ghi đơn hàng: " + e.getMessage());
+                    }
+                } while (cursor.moveToNext());
+            } else {
+                Log.d("DatabaseHelper", "Không có đơn hàng nào trong lịch sử!");
+            }
+            
+            Log.d("DatabaseHelper", "Tổng số đơn hàng đọc được: " + orders.size());
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi truy vấn lịch sử đơn hàng: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
         }
-
-        cursor.close();
-        db.close();
+        
         return orders;
     }
 
     // **📌 7. Lấy chi tiết món từ đơn hàng**
     public List<OrderDetail> getOrderDetails(String orderId) {
         List<OrderDetail> orderDetails = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT menu_id, quantity FROM " + TABLE_ORDER_DETAILS + " WHERE order_id=?", new String[]{orderId});
-
-        if (cursor.moveToFirst()) {
-            do {
-                int menuId = cursor.getInt(0);
-                int quantity = cursor.getInt(1);
-                orderDetails.add(new OrderDetail(orderId, menuId, quantity));
-            } while (cursor.moveToNext());
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        
+        if (orderId == null || orderId.isEmpty()) {
+            Log.e("DatabaseHelper", "Lỗi: orderId null hoặc rỗng");
+            return orderDetails;
         }
-
-        cursor.close();
-        db.close();
+        
+        try {
+            db = this.getReadableDatabase();
+            
+            if (db == null) {
+                Log.e("DatabaseHelper", "Không thể mở cơ sở dữ liệu để đọc");
+                return orderDetails;
+            }
+            
+            Log.d("DatabaseHelper", "Đang lấy chi tiết đơn hàng: " + orderId);
+            
+            cursor = db.rawQuery("SELECT " + COLUMN_DETAIL_MENU_ID + ", " + COLUMN_DETAIL_QUANTITY 
+                + " FROM " + TABLE_ORDER_DETAILS 
+                + " WHERE " + COLUMN_DETAIL_ORDER_ID + "=?", new String[]{orderId});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    try {
+                        int menuId = cursor.getInt(0);
+                        int quantity = cursor.getInt(1);
+                        OrderDetail detail = new OrderDetail(orderId, menuId, quantity);
+                        orderDetails.add(detail);
+                        Log.d("DatabaseHelper", "Đọc chi tiết: menuID=" + menuId + ", SL=" + quantity);
+                    } catch (Exception e) {
+                        Log.e("DatabaseHelper", "Lỗi khi đọc chi tiết đơn hàng: " + e.getMessage());
+                    }
+                } while (cursor.moveToNext());
+            } else {
+                Log.d("DatabaseHelper", "Không có chi tiết nào cho đơn hàng: " + orderId);
+            }
+            
+            Log.d("DatabaseHelper", "Tổng số chi tiết đơn hàng: " + orderDetails.size());
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi truy vấn chi tiết đơn hàng: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+        
         return orderDetails;
+    }
+
+    /**
+     * Lấy thông tin món ăn theo ID
+     */
+    public MenuItem getMenuItemById(int menuId) {
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        MenuItem menuItem = null;
+        
+        try {
+            db = this.getReadableDatabase();
+            
+            if (db == null) {
+                Log.e("DatabaseHelper", "Không thể mở cơ sở dữ liệu để đọc");
+                return null;
+            }
+            
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_MENU + " WHERE " + COLUMN_MENU_ID + "=?", 
+                    new String[]{String.valueOf(menuId)});
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                String name = cursor.getString(cursor.getColumnIndex(COLUMN_MENU_NAME));
+                double price = cursor.getDouble(cursor.getColumnIndex(COLUMN_MENU_PRICE));
+                String imagePath = cursor.getString(cursor.getColumnIndex(COLUMN_MENU_IMAGE));
+                
+                menuItem = new MenuItem(menuId, name, price, imagePath);
+                Log.d("DatabaseHelper", "Đã tìm thấy món: " + name + " (ID: " + menuId + ")");
+            } else {
+                Log.d("DatabaseHelper", "Không tìm thấy món với ID: " + menuId);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi tìm món theo ID: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+        
+        return menuItem;
     }
 
 }
