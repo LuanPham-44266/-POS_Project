@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.List;
 
 public class MenuAdapter extends BaseAdapter {
@@ -64,7 +65,17 @@ public class MenuAdapter extends BaseAdapter {
         MenuItem item = menuItems.get(position);
         holder.tvItemName.setText(item.getName());
         holder.tvItemPrice.setText(String.format("%,.0f VNĐ", item.getPrice()));
-        holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        
+        // Hiển thị số lượng hiện tại (có thể là từ CartManager hoặc từ MenuItem)
+        CartManager cartManager = CartManager.getInstance();
+        int quantity = 0;
+        
+        if (cartManager.hasItem(item)) {
+            quantity = cartManager.getItemQuantity(item);
+        }
+        
+        // Hiển thị số lượng từ CartManager thay vì từ MenuItem
+        holder.tvQuantity.setText(String.valueOf(quantity));
 
         // Nếu ở chế độ xóa, hiển thị nút "Xóa", ẩn nút "+" và "-"
         if (isDeleteMode) {
@@ -80,19 +91,31 @@ public class MenuAdapter extends BaseAdapter {
 
         // Xử lý nút Tăng (+)
         holder.btnIncrease.setOnClickListener(v -> {
-            item.increaseQuantity();
-            holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
-            CartManager.getInstance().addItem(item, 1);
-            notifyDataSetChanged();
+            // Thêm trực tiếp vào CartManager
+            cartManager.addItem(item, 1);
+            
+            // Cập nhật hiển thị
+            int newQuantity = cartManager.getItemQuantity(item);
+            holder.tvQuantity.setText(String.valueOf(newQuantity));
+            
+            // Thông báo cho người dùng
+            Toast.makeText(context, "Đã thêm " + item.getName(), Toast.LENGTH_SHORT).show();
         });
 
         // Xử lý nút Giảm (-)
         holder.btnDecrease.setOnClickListener(v -> {
-            if (item.getQuantity() > 0) {
-                item.decreaseQuantity();
-                holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
-                CartManager.getInstance().removeItem(item);
-                notifyDataSetChanged();
+            if (cartManager.hasItem(item)) {
+                // Giảm số lượng trong CartManager
+                cartManager.removeItem(item);
+                
+                // Cập nhật hiển thị
+                int newQuantity = cartManager.getItemQuantity(item);
+                holder.tvQuantity.setText(String.valueOf(newQuantity));
+                
+                // Thông báo cho người dùng nếu đã xóa hết
+                if (newQuantity == 0) {
+                    Toast.makeText(context, "Đã xóa " + item.getName() + " khỏi giỏ hàng", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
