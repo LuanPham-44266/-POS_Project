@@ -427,4 +427,89 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return menuItem;
     }
 
+    // Phương thức lấy tổng doanh thu theo ngày
+    public double getDailyRevenue(String date) {
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        double revenue = 0;
+        
+        try {
+            db = this.getReadableDatabase();
+            
+            if (db == null) {
+                Log.e("DatabaseHelper", "Không thể mở cơ sở dữ liệu để đọc");
+                return 0;
+            }
+            
+            // Truy vấn tổng doanh thu trong ngày chỉ định
+            // date_time định dạng là "YYYY-MM-DD HH:MM:SS", nên chúng ta cần so sánh phần đầu
+            String query = "SELECT SUM(" + COLUMN_TOTAL_PRICE + ") FROM " + TABLE_ORDERS + 
+                           " WHERE " + COLUMN_DATE_TIME + " LIKE '" + date + "%'";
+            
+            cursor = db.rawQuery(query, null);
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                revenue = cursor.getDouble(0);
+                Log.d("DatabaseHelper", "Doanh thu ngày " + date + ": " + revenue);
+            } else {
+                Log.d("DatabaseHelper", "Không có doanh thu nào trong ngày " + date);
+            }
+            
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi truy vấn doanh thu theo ngày: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+        
+        return revenue;
+    }
+    
+    // Phương thức lấy số lượng đơn hàng theo ngày
+    public int getOrderCountByDate(String date) {
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        int count = 0;
+        
+        try {
+            db = this.getReadableDatabase();
+            
+            if (db == null) {
+                Log.e("DatabaseHelper", "Không thể mở cơ sở dữ liệu để đọc");
+                return 0;
+            }
+            
+            // Đếm số đơn hàng trong ngày chỉ định
+            String query = "SELECT COUNT(*) FROM " + TABLE_ORDERS + 
+                          " WHERE " + COLUMN_DATE_TIME + " LIKE '" + date + "%'";
+            
+            cursor = db.rawQuery(query, null);
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+                Log.d("DatabaseHelper", "Số đơn hàng ngày " + date + ": " + count);
+            } else {
+                Log.d("DatabaseHelper", "Không có đơn hàng nào trong ngày " + date);
+            }
+            
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Lỗi khi đếm số đơn hàng theo ngày: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+        
+        return count;
+    }
+
 }
