@@ -1,5 +1,6 @@
 package com.phamvietluan.pos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -7,6 +8,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.content.Context;
+import android.widget.BaseAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderHistoryActivity extends AppCompatActivity {
+    private static final String TAG = "OrderHistoryActivity";
+    
     private ListView lvOrderHistory;
     private List<Order> orderList;
     private OrderHistoryAdapter orderHistoryAdapter;
@@ -25,6 +32,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_history);
 
+        // Ánh xạ views
         lvOrderHistory = findViewById(R.id.lvOrderHistory);
         btnRefresh = findViewById(R.id.btnRefresh);
         btnBack = findViewById(R.id.btnBack);
@@ -90,19 +98,19 @@ public class OrderHistoryActivity extends AppCompatActivity {
     }
     
     private void loadOrderHistory() {
-        Log.d("OrderHistoryActivity", "Bắt đầu tải dữ liệu lịch sử đơn hàng");
+        Log.d(TAG, "Bắt đầu tải dữ liệu lịch sử đơn hàng");
         orderList = databaseHelper.getAllOrders(); // Lấy danh sách đơn từ database
         
-        Log.d("OrderHistoryActivity", "Số đơn hàng đã nhận: " + orderList.size());
+        Log.d(TAG, "Số đơn hàng đã nhận: " + orderList.size());
         
         if (orderList.isEmpty()) {
-            Log.d("OrderHistoryActivity", "Danh sách đơn hàng trống");
+            Log.d(TAG, "Danh sách đơn hàng trống");
             Toast.makeText(this, "Chưa có đơn hàng nào", Toast.LENGTH_SHORT).show();
         } else {
             // Hiển thị thông tin của đơn hàng đầu tiên để kiểm tra
             if (!orderList.isEmpty()) {
                 Order firstOrder = orderList.get(0);
-                Log.d("OrderHistoryActivity", "Đơn hàng đầu tiên: ID=" + firstOrder.getOrderId() 
+                Log.d(TAG, "Đơn hàng đầu tiên: ID=" + firstOrder.getOrderId() 
                     + ", Giá=" + firstOrder.getTotalPrice() + ", Ngày=" + firstOrder.getDateTime());
             }
         }

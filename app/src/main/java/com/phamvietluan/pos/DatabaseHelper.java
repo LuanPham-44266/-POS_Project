@@ -130,6 +130,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Cập nhật món trong menu (bao gồm cả ảnh)
+    public void updateMenuItem(int id, String newName, double newPrice, String imagePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MENU_NAME, newName);
+        values.put(COLUMN_MENU_PRICE, newPrice);
+        
+        // Cập nhật đường dẫn ảnh nếu có
+        if (imagePath != null && !imagePath.isEmpty()) {
+            values.put(COLUMN_MENU_IMAGE, imagePath);
+        }
+        
+        db.update(TABLE_MENU, values, COLUMN_MENU_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
     // **📌 3. Xóa món trong menu**
     public void deleteMenuItem(int id) {
         SQLiteDatabase db = this.getWritableDatabase();

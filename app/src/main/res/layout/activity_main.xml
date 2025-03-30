@@ -5,6 +5,19 @@
     android:padding="16dp"
     android:background="#E653BD">
 
+    <!-- Nút đổi mật khẩu ở góc trên bên phải -->
+    <Button
+        android:id="@+id/btnChangePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đổi mật khẩu"
+        android:textSize="12sp"
+        android:padding="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="#3A1F5D"
+        android:textColor="#FFFFFF" />
+
     <!-- Tiêu đề ứng dụng -->
     <TextView
         android:id="@+id/tvTitle"
@@ -74,9 +87,22 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Thêm món"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:padding="12dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="4dp"
+            android:backgroundTint="#3A1F5D"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnUpdateItem"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Cập nhật món"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:backgroundTint="#3A1F5D"
             android:textColor="@android:color/white" />
 
@@ -86,9 +112,9 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Xóa món"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:padding="12dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:backgroundTint="#3A1F5D"
             android:textColor="@android:color/white" />
     </LinearLayout>

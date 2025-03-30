@@ -33,6 +33,7 @@
         <activity android:name=".CartActivity" />
         <activity android:name=".AddItemActivity" />
         <activity android:name=".DeleteItemActivity" />
+        <activity android:name=".UpdateItemActivity" />
         <activity android:name=".OrderHistoryActivity" />
 
     </application>
