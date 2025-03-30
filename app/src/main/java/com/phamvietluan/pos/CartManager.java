@@ -78,7 +78,7 @@ class CartManager {
         Log.d("CartManager", "Giỏ hàng đã được xóa.");
     }
 
-    // **📌 Kiểm tra giỏ hàng có trống không**
+    // ** Kiểm tra giỏ hàng có trống không**
     public boolean isCartEmpty() {
         return cartItems.isEmpty();
     }
