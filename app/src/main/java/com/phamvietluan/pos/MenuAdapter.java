@@ -61,10 +61,9 @@ public class MenuAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        // Lấy dữ liệu từ danh sách
         MenuItem item = menuItems.get(position);
         holder.tvItemName.setText(item.getName());
-        holder.tvItemPrice.setText(String.format("%,.2f VNĐ", item.getPrice()));
+        holder.tvItemPrice.setText(String.format("%,.0f VNĐ", item.getPrice()));
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
 
         // Nếu ở chế độ xóa, hiển thị nút "Xóa", ẩn nút "+" và "-"
@@ -83,12 +82,18 @@ public class MenuAdapter extends BaseAdapter {
         holder.btnIncrease.setOnClickListener(v -> {
             item.increaseQuantity();
             holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+            CartManager.getInstance().addItem(item, 1);
+            notifyDataSetChanged();
         });
 
         // Xử lý nút Giảm (-)
         holder.btnDecrease.setOnClickListener(v -> {
-            item.decreaseQuantity();
-            holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+            if (item.getQuantity() > 0) {
+                item.decreaseQuantity();
+                holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+                CartManager.getInstance().removeItem(item);
+                notifyDataSetChanged();
+            }
         });
 
         return convertView;
@@ -101,20 +106,5 @@ public class MenuAdapter extends BaseAdapter {
         Button btnIncrease;
         Button btnDecrease;
         Button btnDelete; // Thêm nút xóa
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // ... code khác ...
-        
-        MenuItem item = menuItems.get(position);
-        CartManager cartManager = CartManager.getInstance();
-        
-        // Cập nhật số lượng từ CartManager
-        if (cartManager.hasItem(item)) {
-            holder.tvQuantity.setText(String.valueOf(cartManager.getItemQuantity(item)));
-        } else {
-            holder.tvQuantity.setText("0");
-        }
     }
 }
