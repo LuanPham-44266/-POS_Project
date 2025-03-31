@@ -3,5 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple_500">#6200EE</color>
-    <color name="teal_700">#00796B</color> <!-- 🔥 Thêm dòng này nếu thiếu -->
+    <color name="teal_700">#00796B</color>
+    <color name="main_teal">#0097b2</color>
+    <color name="navy_blue">#000080</color>
 </resources>

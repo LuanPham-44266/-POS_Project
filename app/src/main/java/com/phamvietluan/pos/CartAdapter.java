@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
@@ -12,10 +13,17 @@ import java.util.List;
 public class CartAdapter extends BaseAdapter {
     private Context context;
     private List<CartItem> cartItems;
+    private CartItemListener listener;
 
-    public CartAdapter(Context context, List<CartItem> cartItems) {
+    // Interface để xử lý sự kiện xóa item
+    public interface CartItemListener {
+        void onRemoveItem(int position);
+    }
+
+    public CartAdapter(Context context, List<CartItem> cartItems, CartItemListener listener) {
         this.context = context;
         this.cartItems = cartItems;
+        this.listener = listener;
     }
 
     @Override
@@ -34,19 +42,31 @@ public class CartAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_cart, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.cart_item, parent, false);
         }
 
         CartItem cartItem = cartItems.get(position);
-        TextView tvName = convertView.findViewById(R.id.tvName);
-        TextView tvPrice = convertView.findViewById(R.id.tvPrice);
-        TextView tvQuantity = convertView.findViewById(R.id.tvQuantity);
+        TextView tvItemName = convertView.findViewById(R.id.tvItemName);
+        Button btnRemoveItem = convertView.findViewById(R.id.btnRemoveItem);
 
-        tvName.setText(cartItem.getMenuItem().getName());
-        tvPrice.setText(String.format("%.0f đ", cartItem.getMenuItem().getPrice()));
-        tvQuantity.setText("SL: " + cartItem.getQuantity());
+        // Hiển thị tên món và giá
+        String displayText = cartItem.getMenuItem().getName();
+        if (cartItem.getQuantity() > 1) {
+            displayText += " (SL: " + cartItem.getQuantity() + ")";
+        }
+        tvItemName.setText(displayText);
+
+        // Xử lý sự kiện khi nhấn nút xóa
+        btnRemoveItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onRemoveItem(position);
+                }
+            }
+        });
 
         return convertView;
     }

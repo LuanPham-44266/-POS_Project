@@ -35,7 +35,13 @@ class CartManager {
         Log.d("CartManager", "Thêm món: " + item.getName() + " SL: " + quantity);
     }
 
-
+    public void removeItem(int position) {
+        if (position >= 0 && position < cartItems.size()) {
+            CartItem item = cartItems.get(position);
+            Log.d("CartManager", "Xóa món theo vị trí: " + position + " - " + item.getMenuItem().getName());
+            cartItems.remove(position);
+        }
+    }
 
     public void removeItem(MenuItem item) {
         if (item == null) return;

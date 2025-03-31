@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DETAIL_MENU_ID = "menu_id";
     private static final String COLUMN_DETAIL_QUANTITY = "quantity";
 
-    // **📌 Bảng Người dùng (Users)**
+    // ** Bảng Người dùng (Users)**
     private static final String TABLE_USERS = "users";
     private static final String COLUMN_USER_ID = "id";
     private static final String COLUMN_USERNAME = "username";
@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + COLUMN_DETAIL_ORDER_ID + ") REFERENCES " + TABLE_ORDERS + "(" + COLUMN_ORDER_ID + "), "
                 + "FOREIGN KEY(" + COLUMN_DETAIL_MENU_ID + ") REFERENCES " + TABLE_MENU + "(" + COLUMN_MENU_ID + "))";
         db.execSQL(createOrderDetailsTable);
-        // **📌 Tạo bảng Người dùng**
+        // ** Tạo bảng Người dùng**
         String createUserTable = "CREATE TABLE " + TABLE_USERS + " ("
                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_USERNAME + " TEXT UNIQUE, "
@@ -85,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_ROLE + " TEXT)";
         db.execSQL(createUserTable);
 
-        // **📌 Thêm tài khoản Admin mặc định**
+        // ** Thêm tài khoản Admin mặc định**
 //        addAdminAccount(db);
     }
 
@@ -98,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // **📌 1. Thêm món vào menu**
+    // **1. Thêm món vào menu**
     public boolean addMenuItem(String name, double price, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -110,7 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             long result = db.insert(TABLE_MENU, null, values);
             Log.d("DatabaseHelper", "Thêm món: " + name + ", Kết quả: " + result);
-            return result != -1; // ✅ Nếu `insert()` thành công, trả về `true`, ngược lại `false`
+            return result != -1; //  Nếu `insert()` thành công, trả về `true`, ngược lại `false`
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Lỗi khi thêm món: " + e.getMessage());
             return false;
@@ -120,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    // **📌 2. Cập nhật món trong menu**
+    // * 2. Cập nhật món trong menu**
     public void updateMenuItem(int id, String newName, double newPrice) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -146,14 +146,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    // **📌 3. Xóa món trong menu**
+    // ** 3. Xóa món trong menu**
     public void deleteMenuItem(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MENU, COLUMN_MENU_ID + " = ?", new String[]{String.valueOf(id)});
         db.close();
     }
 
-    // **📌 4. Lấy danh sách món từ Menu**
+    // ** 4. Lấy danh sách món từ Menu**
     public List<MenuItem> getAllMenuItems() {
         List<MenuItem> menuList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -179,38 +179,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return menuList;
     }
-//    // **📌 Thêm tài khoản Admin mặc định**
-//    private void addAdminAccount(SQLiteDatabase db) {
-//        ContentValues values = new ContentValues();
-//        values.put(COLUMN_USERNAME, "admin");
-//        values.put(COLUMN_PASSWORD, "123456"); // ⚠️ Mật khẩu này nên được mã hóa
-//        values.put(COLUMN_ROLE, "admin");
-//        db.insert(TABLE_USERS, null, values);
-//    }
 //
-//    // **📌 Kiểm tra đăng nhập**
-//    public boolean checkLogin(String username, String password) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND password = ?", new String[]{username, password});
-//
-//        boolean isLoggedIn = cursor.moveToFirst();
-//        cursor.close();
-//        db.close();
-//        return isLoggedIn;
-//    }
-//
-//    // **📌 Kiểm tra người dùng có phải Admin không**
-//    public boolean isAdmin(String username) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE username = ? AND role = 'admin'", new String[]{username});
-//
-//        boolean isAdmin = cursor.moveToFirst();
-//        cursor.close();
-//        db.close();
-//        return isAdmin;
-//    }
-
-    // **📌 5. Lưu đơn hàng vào lịch sử (có chi tiết món)**
+    // ** 5. Lưu đơn hàng vào lịch sử (có chi tiết món)**
     public void saveOrder(String orderId, double totalPrice, String dateTime) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -218,7 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.beginTransaction();
             Log.d("DatabaseHelper", "Bắt đầu lưu đơn hàng: ID=" + orderId + ", Giá=" + totalPrice);
 
-            // ✅ Lưu thông tin đơn hàng
+            //  Lưu thông tin đơn hàng
             ContentValues orderValues = new ContentValues();
             orderValues.put(COLUMN_ORDER_ID, orderId);
             orderValues.put(COLUMN_TOTAL_PRICE, totalPrice);
@@ -232,7 +202,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             
             Log.d("DatabaseHelper", "Đã lưu thông tin đơn hàng. Kết quả insert: " + orderRowId);
 
-            // ✅ Lấy danh sách món từ giỏ hàng (CartManager)
+            //  Lấy danh sách món từ giỏ hàng (CartManager)
             List<CartItem> cartItems = CartManager.getInstance().getCartItems();
             
             if (cartItems == null || cartItems.isEmpty()) {
@@ -242,7 +212,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             
             Log.d("DatabaseHelper", "Số món trong đơn hàng: " + cartItems.size());
 
-            // ✅ Lưu từng món vào order_details
+            //  Lưu từng món vào order_details
             for (CartItem cartItem : cartItems) {
                 if (cartItem == null || cartItem.getMenuItem() == null) {
                     Log.e("DatabaseHelper", "Lỗi: CartItem hoặc MenuItem null");
@@ -275,7 +245,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // **📌 6. Lấy danh sách đơn hàng từ lịch sử**
+    // ** 6. Lấy danh sách đơn hàng từ lịch sử**
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
         SQLiteDatabase db = null;
@@ -326,7 +296,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return orders;
     }
 
-    // **📌 7. Lấy chi tiết món từ đơn hàng**
+    // ** 7. Lấy chi tiết món từ đơn hàng**
     public List<OrderDetail> getOrderDetails(String orderId) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         SQLiteDatabase db = null;
@@ -442,7 +412,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             
             // Truy vấn tổng doanh thu trong ngày chỉ định
-            // date_time định dạng là "YYYY-MM-DD HH:MM:SS", nên chúng ta cần so sánh phần đầu
+            // date_time định dạng là "YYYY-MM-DD HH:MM:SS", nên   cần so sánh phần đầu
             String query = "SELECT SUM(" + COLUMN_TOTAL_PRICE + ") FROM " + TABLE_ORDERS + 
                            " WHERE " + COLUMN_DATE_TIME + " LIKE '" + date + "%'";
             
