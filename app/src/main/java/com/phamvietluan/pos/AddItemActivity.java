@@ -102,7 +102,7 @@ public class AddItemActivity extends AppCompatActivity {
                     // Xóa dữ liệu đã nhập để chuẩn bị thêm món mới
                     etItemName.setText("");
                     etItemPrice.setText("");
-                    imgItem.setImageResource(R.drawable.ic_add_photo);
+                    imgItem.setImageResource(R.drawable.logo_7tea);
                     imageUri = null;
                     savedImagePath = null;
                     selectedDrawableId = -1;
@@ -213,6 +213,9 @@ public class AddItemActivity extends AppCompatActivity {
             // Tạo bitmap từ drawable
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), drawableId);
             
+            // Tối ưu kích thước hình ảnh
+            bitmap = resizeImageIfNeeded(bitmap, 800, 800);
+            
             // Tạo tên file duy nhất dựa trên thời gian hiện tại
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             String fileName = "IMG_" + timeStamp + ".jpg";
@@ -220,9 +223,9 @@ public class AddItemActivity extends AppCompatActivity {
             // Tạo file trong thư mục files của ứng dụng
             File destinationFile = new File(getFilesDir(), fileName);
             
-            // Lưu bitmap vào file
+            // Lưu bitmap vào file với nén 80%
             FileOutputStream outputStream = new FileOutputStream(destinationFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
             outputStream.flush();
             outputStream.close();
             
@@ -245,25 +248,59 @@ public class AddItemActivity extends AppCompatActivity {
             // Tạo file trong thư mục files của ứng dụng
             File destinationFile = new File(getFilesDir(), fileName);
             
-            // Sao chép dữ liệu từ URI đến file đích
+            // Đọc ảnh từ URI và tối ưu hóa
             InputStream inputStream = getContentResolver().openInputStream(sourceUri);
-            OutputStream outputStream = new FileOutputStream(destinationFile);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
             
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+            if (bitmap == null) {
+                Toast.makeText(this, "Không thể đọc hình ảnh!", Toast.LENGTH_SHORT).show();
+                return null;
             }
             
-            inputStream.close();
+            // Tối ưu kích thước hình ảnh
+            bitmap = resizeImageIfNeeded(bitmap, 800, 800);
+            
+            // Lưu bitmap vào file với nén 80%
+            FileOutputStream outputStream = new FileOutputStream(destinationFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+            outputStream.flush();
             outputStream.close();
             
-            // Trả về đường dẫn file đã lưu
             return destinationFile.getAbsolutePath();
-            
         } catch (IOException e) {
             Toast.makeText(this, "Lỗi khi lưu ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             return null;
+        } catch (OutOfMemoryError e) {
+            Toast.makeText(this, "Hình ảnh quá lớn, không thể xử lý!", Toast.LENGTH_SHORT).show();
+            return null;
         }
+    }
+    
+    // Phương thức tối ưu kích thước hình ảnh
+    private Bitmap resizeImageIfNeeded(Bitmap image, int maxWidth, int maxHeight) {
+        if (image == null) return null;
+        
+        int width = image.getWidth();
+        int height = image.getHeight();
+        
+        // Nếu hình ảnh đã nhỏ hơn kích thước tối đa, không cần resize
+        if (width <= maxWidth && height <= maxHeight) {
+            return image;
+        }
+        
+        float ratioBitmap = (float) width / (float) height;
+        float ratioMax = (float) maxWidth / (float) maxHeight;
+        
+        int finalWidth = maxWidth;
+        int finalHeight = maxHeight;
+        
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (int) ((float) maxHeight * ratioBitmap);
+        } else {
+            finalHeight = (int) ((float) maxWidth / ratioBitmap);
+        }
+        
+        return Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
     }
 }

@@ -1,6 +1,7 @@
 package com.phamvietluan.pos;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,15 +71,23 @@ public class UpdateMenuAdapter extends BaseAdapter {
         holder.tvItemPrice.setText(String.format("%,.0f VNĐ", item.getPrice()));
         holder.tvQuantity.setText("0");
         
-        // Hiển thị ảnh từ đường dẫn
+        // Hiển thị ảnh từ đường dẫn với tối ưu hóa bộ nhớ
         try {
             String imagePath = item.getImagePath();
             if (imagePath != null && !imagePath.isEmpty()) {
                 File imageFile = new File(imagePath);
                 if (imageFile.exists()) {
-                    // Hiển thị ảnh từ file nội bộ
-                    holder.imgItem.setImageURI(Uri.fromFile(imageFile));
-                    Log.d("UpdateMenuAdapter", "Hiển thị ảnh từ file nội bộ: " + imagePath);
+                    // Tải ảnh với kích thước phù hợp để tránh lỗi OutOfMemoryError
+                    int targetWidth = 300; // Giới hạn kích thước ảnh
+                    int targetHeight = 300;
+                    Bitmap bitmap = MenuAdapter.decodeSampledBitmapFromFile(imagePath, targetWidth, targetHeight);
+                    if (bitmap != null) {
+                        holder.imgItem.setImageBitmap(bitmap);
+                        Log.d("UpdateMenuAdapter", "Hiển thị ảnh đã tối ưu từ: " + imagePath);
+                    } else {
+                        holder.imgItem.setImageResource(R.drawable.ic_tea);
+                        Log.d("UpdateMenuAdapter", "Không thể tải ảnh tối ưu từ: " + imagePath);
+                    }
                 } else {
                     // Nếu file không tồn tại, hiển thị ảnh mặc định
                     holder.imgItem.setImageResource(R.drawable.ic_tea);
@@ -116,4 +125,4 @@ public class UpdateMenuAdapter extends BaseAdapter {
         Button btnDecrease;
         Button btnDelete;
     }
-} 
+}

@@ -1,6 +1,8 @@
 package com.phamvietluan.pos;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,15 +73,18 @@ public class MenuAdapter extends BaseAdapter {
         holder.tvItemPrice.setText(String.format("%,.0f VNĐ", item.getPrice()));
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
         
-        // Hiển thị ảnh từ đường dẫn
+        // Hiển thị ảnh từ đường dẫn với tối ưu hóa bộ nhớ
         try {
             String imagePath = item.getImagePath();
             if (imagePath != null && !imagePath.isEmpty()) {
                 File imageFile = new File(imagePath);
                 if (imageFile.exists()) {
-                    // Hiển thị ảnh từ file nội bộ
-                    holder.imgItem.setImageURI(Uri.fromFile(imageFile));
-                    Log.d("MenuAdapter", "Hiển thị ảnh từ file nội bộ: " + imagePath);
+                    // Tải ảnh với kích thước phù hợp để tránh lỗi OutOfMemoryError
+                    int targetWidth = 300; // Giới hạn kích thước ảnh
+                    int targetHeight = 300;
+                    Bitmap bitmap = decodeSampledBitmapFromFile(imagePath, targetWidth, targetHeight);
+                    holder.imgItem.setImageBitmap(bitmap);
+                    Log.d("MenuAdapter", "Hiển thị ảnh đã tối ưu từ: " + imagePath);
                 } else {
                     // Nếu file không tồn tại, hiển thị ảnh mặc định
                     holder.imgItem.setImageResource(R.drawable.ic_tea);
@@ -127,6 +132,50 @@ public class MenuAdapter extends BaseAdapter {
         });
 
         return convertView;
+    }
+
+    // Phương thức tối ưu để tải hình ảnh với kích thước phù hợp
+    public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight) {
+        try {
+            // Đọc kích thước ảnh mà không tải toàn bộ vào bộ nhớ
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path, options);
+
+            // Tính toán tỷ lệ thu nhỏ
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+            // Tải ảnh với tỷ lệ thu nhỏ
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565; // Sử dụng ít bộ nhớ hơn
+            return BitmapFactory.decodeFile(path, options);
+        } catch (OutOfMemoryError e) {
+            Log.e("MenuAdapter", "Lỗi hết bộ nhớ khi tải ảnh: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            Log.e("MenuAdapter", "Lỗi khi tải ảnh: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Chiều cao và rộng thực của ảnh
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Tính toán giá trị inSampleSize lớn nhất là lũy thừa của 2
+            // mà vẫn cho kích thước lớn hơn hoặc bằng kích thước yêu cầu
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     static class ViewHolder {

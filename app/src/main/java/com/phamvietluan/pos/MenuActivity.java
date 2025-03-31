@@ -41,7 +41,7 @@ public class MenuActivity extends AppCompatActivity {
         menuAdapter = new MenuAdapter(this, menuItems,false,null);
         lvMenu.setAdapter(menuAdapter);
 
-        // 🔥 Tải menu từ database
+        // Tải menu từ database
         loadMenuItems();
 
         // Sự kiện khi chọn món ăn từ danh sách
@@ -61,14 +61,10 @@ public class MenuActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-//        // 🔥 Thêm món mới (Chỉ hiển thị nếu là Admin)
-//        btnAddItem.setOnClickListener(v -> {
-//            Intent intent = new Intent(MenuActivity.this, AddItemActivity.class);
-//            startActivity(intent);
-//        });
+//
     }
 
-    // ✅ Tải danh sách món từ database và cập nhật ListView
+    //  Tải danh sách món từ database và cập nhật ListView
     private void loadMenuItems() {
         menuItems.clear(); // Xóa danh sách cũ
         menuItems.addAll(databaseHelper.getAllMenuItems()); // Lấy danh sách từ database

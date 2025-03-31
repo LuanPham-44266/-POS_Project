@@ -16,7 +16,7 @@ class CartItem {
     public int getQuantity() {
         return quantity;
     }
-    // 📌 **Thêm phương thức setQuantity**
+    // **Thêm phương thức setQuantity**
     public void setQuantity(int quantity) {
         if (quantity > 0) {
             this.quantity = quantity;

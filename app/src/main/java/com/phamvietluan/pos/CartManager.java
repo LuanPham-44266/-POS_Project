@@ -70,7 +70,7 @@ class CartManager {
         return total;
     }
 
-    // **📌 Lấy danh sách món trong giỏ hàng**
+    // **Lấy danh sách món trong giỏ hàng**
     public List<CartItem> getCartItems() {
         Log.d("CartManager", "Số món trong giỏ: " + cartItems.size());
         for (CartItem item : cartItems) {

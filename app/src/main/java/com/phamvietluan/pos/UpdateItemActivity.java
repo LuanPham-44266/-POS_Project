@@ -2,6 +2,8 @@ package com.phamvietluan.pos;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -82,7 +84,17 @@ public class UpdateItemActivity extends AppCompatActivity {
         if (item.getImagePath() != null && !item.getImagePath().isEmpty()) {
             File imageFile = new File(item.getImagePath());
             if (imageFile.exists()) {
-                imgItem.setImageURI(Uri.fromFile(imageFile));
+                // Sử dụng phương thức tối ưu hóa để hiển thị ảnh
+                try {
+                    Bitmap bitmap = MenuAdapter.decodeSampledBitmapFromFile(item.getImagePath(), 300, 300);
+                    if (bitmap != null) {
+                        imgItem.setImageBitmap(bitmap);
+                    } else {
+                        imgItem.setImageResource(R.drawable.ic_tea);
+                    }
+                } catch (Exception e) {
+                    imgItem.setImageResource(R.drawable.ic_tea);
+                }
             } else {
                 imgItem.setImageResource(R.drawable.ic_tea);
             }
@@ -145,8 +157,14 @@ public class UpdateItemActivity extends AppCompatActivity {
                 AlertDialog currentDialog = (AlertDialog) findViewById(android.R.id.content).getRootView().getTag();
                 if (currentDialog != null && currentDialog.isShowing()) {
                     ImageView imgItem = currentDialog.findViewById(R.id.imgItem);
-                    if (imgItem != null) {
-                        imgItem.setImageURI(Uri.fromFile(new File(tempImagePath)));
+                    if (imgItem != null && tempImagePath != null && !tempImagePath.isEmpty()) {
+                        // Sử dụng phương thức tối ưu hóa để hiển thị ảnh
+                        Bitmap bitmap = MenuAdapter.decodeSampledBitmapFromFile(tempImagePath, 300, 300);
+                        if (bitmap != null) {
+                            imgItem.setImageBitmap(bitmap);
+                        } else {
+                            imgItem.setImageResource(R.drawable.ic_tea);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -157,10 +175,23 @@ public class UpdateItemActivity extends AppCompatActivity {
     
     private String saveImageToInternalStorage(Uri sourceUri) {
         try {
+            // Đọc ảnh từ URI và tối ưu hóa
             InputStream inputStream = getContentResolver().openInputStream(sourceUri);
             if (inputStream == null) {
                 return "";
             }
+            
+            // Đọc bitmap từ inputStream
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+            
+            if (bitmap == null) {
+                Toast.makeText(this, "Không thể đọc hình ảnh!", Toast.LENGTH_SHORT).show();
+                return "";
+            }
+            
+            // Tối ưu kích thước hình ảnh
+            bitmap = resizeImageIfNeeded(bitmap, 800, 800);
             
             // Tạo tên file duy nhất với timestamp
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -176,20 +207,45 @@ public class UpdateItemActivity extends AppCompatActivity {
             File imageFile = new File(imageDir, imageFileName);
             FileOutputStream outputStream = new FileOutputStream(imageFile);
             
-            // Sao chép dữ liệu từ Uri nguồn sang file đích
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            
-            inputStream.close();
+            // Lưu bitmap vào file với nén 80%
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+            outputStream.flush();
             outputStream.close();
             
             return imageFile.getAbsolutePath();
         } catch (Exception e) {
             e.printStackTrace();
             return "";
+        } catch (OutOfMemoryError e) {
+            Toast.makeText(this, "Hình ảnh quá lớn, không thể xử lý!", Toast.LENGTH_SHORT).show();
+            return "";
         }
     }
-} 
+    
+    // Phương thức tối ưu kích thước hình ảnh
+    private Bitmap resizeImageIfNeeded(Bitmap image, int maxWidth, int maxHeight) {
+        if (image == null) return null;
+        
+        int width = image.getWidth();
+        int height = image.getHeight();
+        
+        // Nếu hình ảnh đã nhỏ hơn kích thước tối đa, không cần resize
+        if (width <= maxWidth && height <= maxHeight) {
+            return image;
+        }
+        
+        float ratioBitmap = (float) width / (float) height;
+        float ratioMax = (float) maxWidth / (float) maxHeight;
+        
+        int finalWidth = maxWidth;
+        int finalHeight = maxHeight;
+        
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (int) ((float) maxHeight * ratioBitmap);
+        } else {
+            finalHeight = (int) ((float) maxWidth / ratioBitmap);
+        }
+        
+        return Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+    }
+}

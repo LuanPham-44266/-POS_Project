@@ -35,12 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DETAIL_MENU_ID = "menu_id";
     private static final String COLUMN_DETAIL_QUANTITY = "quantity";
 
-    // ** Bảng Người dùng (Users)**
-    private static final String TABLE_USERS = "users";
-    private static final String COLUMN_USER_ID = "id";
-    private static final String COLUMN_USERNAME = "username";
-    private static final String COLUMN_PASSWORD = "password";
-    private static final String COLUMN_ROLE = "role"; // 'admin' hoặc 'staff'
+
 
 
     public DatabaseHelper(Context context) {
@@ -77,16 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + COLUMN_DETAIL_ORDER_ID + ") REFERENCES " + TABLE_ORDERS + "(" + COLUMN_ORDER_ID + "), "
                 + "FOREIGN KEY(" + COLUMN_DETAIL_MENU_ID + ") REFERENCES " + TABLE_MENU + "(" + COLUMN_MENU_ID + "))";
         db.execSQL(createOrderDetailsTable);
-        // ** Tạo bảng Người dùng**
-        String createUserTable = "CREATE TABLE " + TABLE_USERS + " ("
-                + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_USERNAME + " TEXT UNIQUE, "
-                + COLUMN_PASSWORD + " TEXT, "
-                + COLUMN_ROLE + " TEXT)";
-        db.execSQL(createUserTable);
-
-        // ** Thêm tài khoản Admin mặc định**
-//        addAdminAccount(db);
+        
     }
 
     @Override
@@ -94,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MENU);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAILS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+
         onCreate(db);
     }
 
