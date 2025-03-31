@@ -4,30 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="#E653BD">
 
-    <!-- Nút Thoát -->
-    <Button
-        android:id="@+id/btnExit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thoát"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp" />
-
-    <!-- Layout chứa các nút -->
     <LinearLayout
-        android:id="@+id/layoutButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_below="@id/btnExit"
+        android:gravity="center_vertical"
         android:layout_marginBottom="16dp">
         
-        <!-- Các nút sẽ được thêm vào đây -->
-        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Thêm món mới"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
+            
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quay lại"
+            android:backgroundTint="#3A1F5D"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 
     <!-- Ảnh món -->
@@ -38,7 +39,8 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_add_photo"
         android:layout_gravity="center"
-        android:background="@android:color/darker_gray"/>
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"/>
 
     <!-- Nút chọn ảnh -->
     <Button
@@ -47,34 +49,52 @@
         android:layout_height="wrap_content"
         android:text="Chọn ảnh"
         android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@android:color/holo_blue_light"/>
+        android:backgroundTint="#7B2CBF"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
 
     <!-- Nhập tên món -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tên món"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="4dp"/>
+        
     <EditText
         android:id="@+id/etItemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tên món"
+        android:hint="Nhập tên món"
         android:inputType="textPersonName|textCapSentences|textMultiLine"
         android:imeOptions="actionNext"
         android:minHeight="48dp"
-        android:padding="10dp"
-        android:background="@android:drawable/editbox_background"
-        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"
         android:importantForAutofill="no" />
 
     <!-- Nhập giá món -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Giá món"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="4dp"/>
+        
     <EditText
         android:id="@+id/etItemPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Giá món"
+        android:hint="Nhập giá món"
         android:inputType="numberDecimal"
         android:minHeight="48dp"
-        android:padding="10dp"
-        android:background="@android:drawable/editbox_background"
-        android:layout_marginTop="8dp"/>
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"/>
 
     <!-- Nút Lưu món -->
     <Button
@@ -82,9 +102,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Lưu món"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@android:color/holo_green_dark"
-        android:textColor="@android:color/white"/>
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:backgroundTint="#7B2CBF"
+        android:textColor="#FFFFFF"/>
 
 </LinearLayout>

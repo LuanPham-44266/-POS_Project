@@ -3,20 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
-    <Button
-        android:id="@+id/btnExit"
-        android:layout_width="wrap_content"
+    android:padding="16dp"
+    android:background="#E653BD">
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thoát"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Xóa món"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
+            
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quay lại"
+            android:backgroundTint="#3A1F5D"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nhấn vào nút 'Xóa' để xóa món khỏi menu"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:textColor="@android:color/white"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Thay RecyclerView bằng ListView -->
+    <!-- Danh sách món để xóa -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp" />
 </LinearLayout>
