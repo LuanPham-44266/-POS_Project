@@ -17,31 +17,43 @@
         android:weightSum="2"
         android:layout_marginBottom="20dp">
 
-        <Button
+        <LinearLayout
             android:id="@+id/btnCart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:background="@drawable/rounded_button_white"
-            android:paddingVertical="12dp"
-            android:text="GIỎ HÀNG"
-            android:textColor="#000080"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:padding="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GIỎ HÀNG"
+                android:textColor="#000080"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-        <Button
+        <LinearLayout
             android:id="@+id/btnExit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:background="@drawable/rounded_button_white"
-            android:paddingVertical="12dp"
-            android:text="QUAY LẠI"
-            android:textColor="#000080"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:padding="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QUAY LẠI"
+                android:textColor="#000080"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Cart items list -->
@@ -70,45 +82,62 @@
             android:orientation="horizontal"
             android:layout_marginBottom="20dp">
 
-            <Button
+            <LinearLayout
                 android:id="@+id/btnTotal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:background="@drawable/rounded_button_white"
-                android:paddingVertical="12dp"
-                android:text="TỔNG:"
-                android:textAlignment="center"
-                android:textColor="#000080"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:padding="16dp">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TỔNG:"
+                    android:textColor="#000080"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <Button
+            <LinearLayout
                 android:id="@+id/tvTotal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:background="@drawable/rounded_button_white"
-                android:paddingVertical="12dp"
-                android:text="0 VNĐ"
-                android:textAlignment="center"
+                android:padding="16dp">
+                
+                <TextView
+                    android:id="@+id/tvTotalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 VNĐ"
+                    android:textColor="#000080"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnCheckout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/rounded_button_white"
+            android:padding="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="THANH TOÁN"
                 android:textColor="#000080"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnCheckout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_button_white"
-            android:paddingVertical="16dp"
-            android:text="THANH TOÁN"
-            android:textColor="#000080"
-            android:textSize="18sp"
-            android:textStyle="bold" />
     </LinearLayout>
 
 </RelativeLayout>

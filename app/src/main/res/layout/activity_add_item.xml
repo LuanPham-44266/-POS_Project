@@ -22,13 +22,22 @@
             android:textStyle="bold"
             android:textColor="#FFFFFF"/>
             
-        <Button
+        <LinearLayout
             android:id="@+id/btnExit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quay lại"
-            android:backgroundTint="#3A1F5D"
-            android:textColor="#FFFFFF"/>
+            android:gravity="center"
+            android:background="@drawable/rounded_button_white"
+            android:padding="12dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QUAY LẠI"
+                android:textColor="#000080"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Ảnh món -->
@@ -43,16 +52,23 @@
         android:layout_marginBottom="16dp"/>
 
     <!-- Nút chọn ảnh -->
-    <Button
+    <LinearLayout
         android:id="@+id/btnChooseImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chọn ảnh"
-        android:textSize="16sp"
-        android:backgroundTint="#7B2CBF"
-        android:textColor="#FFFFFF"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"/>
+        android:gravity="center"
+        android:background="@drawable/rounded_button_white"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CHỌN ẢNH"
+            android:textColor="#000080"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     <!-- Nhập tên món -->
     <TextView
@@ -97,14 +113,21 @@
         android:layout_marginBottom="16dp"/>
 
     <!-- Nút Lưu món -->
-    <Button
+    <LinearLayout
         android:id="@+id/btnSaveItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lưu món"
-        android:textSize="18sp"
-        android:padding="12dp"
-        android:backgroundTint="#7B2CBF"
-        android:textColor="#FFFFFF"/>
+        android:gravity="center"
+        android:background="@drawable/rounded_button_white"
+        android:padding="16dp">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LƯU MÓN"
+            android:textColor="#000080"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
 </LinearLayout>

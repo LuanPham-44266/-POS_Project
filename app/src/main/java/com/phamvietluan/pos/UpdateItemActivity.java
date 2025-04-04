@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -74,7 +75,7 @@ public class UpdateItemActivity extends AppCompatActivity {
         EditText etName = view.findViewById(R.id.etItemName);
         EditText etPrice = view.findViewById(R.id.etItemPrice);
         ImageView imgItem = view.findViewById(R.id.imgItem);
-        Button btnChooseImage = view.findViewById(R.id.btnChooseImage);
+        LinearLayout btnChooseImage = view.findViewById(R.id.btnChooseImage);
         
         // Điền thông tin hiện tại của món
         etName.setText(item.getName());

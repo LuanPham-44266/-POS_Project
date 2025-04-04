@@ -14,15 +14,24 @@
         android:src="@drawable/ic_tea"
         android:layout_marginBottom="16dp" />
 
-    <Button
+    <LinearLayout
         android:id="@+id/btnChooseImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Chọn ảnh"
-        android:backgroundTint="#7B2CBF"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="16dp" />
+        android:gravity="center"
+        android:background="@drawable/rounded_button_white"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CHỌN ẢNH"
+            android:textColor="#000080"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"

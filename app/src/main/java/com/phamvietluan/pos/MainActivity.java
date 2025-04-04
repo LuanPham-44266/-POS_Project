@@ -7,15 +7,14 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private Button btnMenu, btnCart, btnOrderHistory, btnAddItem, btnDeleteItem, btnUpdateItem, btnChangePassword;
+    private LinearLayout btnMenu, btnCart, btnOrderHistory, btnAddItem, btnDeleteItem, btnUpdateItem, btnChangePassword;
     private static final String ADMIN_PASSWORD = "1234"; // Mật khẩu mặc định
     private static final String PREFS_NAME = "POSPrefs";
     private static final String PASSWORD_KEY = "admin_password";

@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,8 +19,8 @@ import java.util.UUID;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.CartItemListener {
     private ListView lvCart;
-    private TextView tvTotal;
-    private Button btnCheckout, btnExit, btnCart, btnTotal;
+    private TextView tvTotalText;
+    private LinearLayout btnCheckout, btnExit, btnCart, btnTotal, tvTotal;
     private CartManager cartManager;
     private CartAdapter cartAdapter;
     private List<CartItem> cartItems;
@@ -34,6 +34,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartI
         // Ánh xạ các thành phần từ layout
         lvCart = findViewById(R.id.lvCart);
         tvTotal = findViewById(R.id.tvTotal);
+        tvTotalText = findViewById(R.id.tvTotalText);
         btnCheckout = findViewById(R.id.btnCheckout);
         btnExit = findViewById(R.id.btnExit);
         btnCart = findViewById(R.id.btnCart);
@@ -67,7 +68,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartI
 
     private void updateTotal() {
         // Cập nhật hiển thị tổng tiền
-        tvTotal.setText(String.format("%.0f VNĐ", cartManager.getTotalPrice()));
+        tvTotalText.setText(String.format("%.0f VNĐ", cartManager.getTotalPrice()));
     }
 
     @Override

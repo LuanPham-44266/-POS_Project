@@ -3,7 +3,7 @@ package com.phamvietluan.pos;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +19,7 @@ public class MenuActivity extends AppCompatActivity {
     private MenuAdapter menuAdapter;
     private DatabaseHelper databaseHelper;
 
-    Button btnCheckout, btnExit, btnAddItem;
+    LinearLayout btnCheckout, btnExit, btnAddItem;
 
     @SuppressLint("MissingInflatedId")
     @Override

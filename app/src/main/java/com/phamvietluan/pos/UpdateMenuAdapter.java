@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -108,7 +108,8 @@ public class UpdateMenuAdapter extends BaseAdapter {
         holder.btnDecrease.setVisibility(View.GONE);
         holder.btnIncrease.setVisibility(View.GONE);
         holder.btnDelete.setVisibility(View.VISIBLE);
-        holder.btnDelete.setText("Cập nhật");
+        holder.btnDelete.setImageResource(R.drawable.ic_update_btn);
+        holder.btnDelete.setContentDescription("Cập nhật món");
         
         // Đặt sự kiện click cho nút cập nhật
         holder.btnDelete.setOnClickListener(v -> updateListener.onUpdate(item));
@@ -121,8 +122,8 @@ public class UpdateMenuAdapter extends BaseAdapter {
         TextView tvItemName;
         TextView tvItemPrice;
         TextView tvQuantity;
-        Button btnIncrease;
-        Button btnDecrease;
-        Button btnDelete;
+        ImageButton btnIncrease;
+        ImageButton btnDecrease;
+        ImageButton btnDelete;
     }
 }

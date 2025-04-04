@@ -2,7 +2,7 @@ package com.phamvietluan.pos;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,7 +21,7 @@ public class DeleteItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_item);
-        Button btnExit = findViewById(R.id.btnExit);
+        LinearLayout btnExit = findViewById(R.id.btnExit);
         databaseHelper = new DatabaseHelper(this);
         listView = findViewById(R.id.listView);
 

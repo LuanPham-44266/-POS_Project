@@ -7,10 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,12 +43,12 @@ public class AddItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_item);
 
         // Ánh xạ view
-        Button btnExit = findViewById(R.id.btnExit);
+        LinearLayout btnExit = findViewById(R.id.btnExit);
         imgItem = findViewById(R.id.imgItem);
-        Button btnChooseImage = findViewById(R.id.btnChooseImage);
+        LinearLayout btnChooseImage = findViewById(R.id.btnChooseImage);
         etItemName = findViewById(R.id.etItemName);
         etItemPrice = findViewById(R.id.etItemPrice);
-        Button btnSaveItem = findViewById(R.id.btnSaveItem);
+        LinearLayout btnSaveItem = findViewById(R.id.btnSaveItem);
         
         // Nút Thoát
         btnExit.setOnClickListener(v -> finish());

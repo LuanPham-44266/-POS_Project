@@ -45,14 +45,14 @@
     </LinearLayout>
 
     <!-- Nút Giảm (-) -->
-    <Button
+    <ImageButton
         android:id="@+id/btnDecrease"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:text="-"
-        android:textSize="20sp"
-        android:backgroundTint="#7B2CBF"
-        android:textColor="@android:color/white"/>
+        android:src="@drawable/ic_minus"
+        android:background="@drawable/button_background"
+        android:padding="12dp"
+        android:contentDescription="Giảm số lượng"/>
 
     <!-- Số lượng món -->
     <TextView
@@ -67,22 +67,24 @@
         android:textColor="#3A1F5D"/>
 
     <!-- Nút Tăng (+) -->
-    <Button
+    <ImageButton
         android:id="@+id/btnIncrease"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:text="+"
-        android:textSize="20sp"
-        android:backgroundTint="#7B2CBF"
-        android:textColor="@android:color/white"/>
-    <Button
+        android:src="@drawable/ic_plus"
+        android:background="@drawable/button_background"
+        android:padding="12dp"
+        android:contentDescription="Tăng số lượng"/>
+
+    <!-- Nút Xóa -->
+    <ImageButton
         android:id="@+id/btnDelete"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:text="🗑"
-        android:textSize="20sp"
-        android:backgroundTint="#3A1F5D"
-        android:textColor="@android:color/white"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_delete"
+        android:background="@drawable/button_background"
+        android:padding="12dp"
+        android:visibility="gone"
+        android:contentDescription="Xóa món"/>
 
 </LinearLayout>

@@ -59,26 +59,42 @@
         android:layout_marginTop="16dp"
         android:padding="8dp">
 
-        <Button
+        <LinearLayout
             android:id="@+id/btnExit"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Thoát"
+            android:gravity="center"
             android:padding="12dp"
-            android:backgroundTint="#3A1F5D"
-            android:textColor="@android:color/white" />
+            android:background="@drawable/rounded_button_white">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="THOÁT"
+                android:textColor="#000080"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
 
-        <Button
+        <LinearLayout
             android:id="@+id/btnCheckout"
             android:layout_width="0dp"
             android:layout_weight="1.5"
             android:layout_height="wrap_content"
-            android:text="Thanh Toán"
+            android:gravity="center"
             android:padding="12dp"
             android:layout_marginStart="16dp"
-            android:backgroundTint="#FFDE59"
-            android:textColor="#3A1F5D" />
+            android:background="@drawable/rounded_button_white">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="THANH TOÁN"
+                android:textColor="#000080"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
 
     </LinearLayout>
 
