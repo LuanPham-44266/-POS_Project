@@ -87,17 +87,17 @@ public class MenuAdapter extends BaseAdapter {
                     Log.d("MenuAdapter", "Hiển thị ảnh đã tối ưu từ: " + imagePath);
                 } else {
                     // Nếu file không tồn tại, hiển thị ảnh mặc định
-                    holder.imgItem.setImageResource(R.drawable.ic_tea);
+                    holder.imgItem.setImageResource(R.drawable.background_7tea);
                     Log.d("MenuAdapter", "File ảnh không tồn tại: " + imagePath);
                 }
             } else {
                 // Nếu không có đường dẫn ảnh, hiển thị ảnh mặc định
-                holder.imgItem.setImageResource(R.drawable.ic_tea);
+                holder.imgItem.setImageResource(R.drawable.background_7tea);
                 Log.d("MenuAdapter", "Không có đường dẫn ảnh cho " + item.getName());
             }
         } catch (Exception e) {
             // Nếu có lỗi, hiển thị ảnh mặc định
-            holder.imgItem.setImageResource(R.drawable.ic_tea);
+            holder.imgItem.setImageResource(R.drawable.background_7tea);
             Log.e("MenuAdapter", "Lỗi khi hiển thị ảnh: " + e.getMessage());
         }
 

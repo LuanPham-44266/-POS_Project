@@ -30,7 +30,7 @@ import java.util.Locale;
 public class UpdateItemActivity extends AppCompatActivity {
 
     private ListView listView;
-    private Button btnExit;
+    private LinearLayout btnExit;
     private DatabaseHelper databaseHelper;
     private List<MenuItem> menuList;
     private UpdateMenuAdapter adapter;
@@ -91,16 +91,16 @@ public class UpdateItemActivity extends AppCompatActivity {
                     if (bitmap != null) {
                         imgItem.setImageBitmap(bitmap);
                     } else {
-                        imgItem.setImageResource(R.drawable.ic_tea);
+                        imgItem.setImageResource(R.drawable.background_7tea);
                     }
                 } catch (Exception e) {
-                    imgItem.setImageResource(R.drawable.ic_tea);
+                    imgItem.setImageResource(R.drawable.background_7tea);
                 }
             } else {
-                imgItem.setImageResource(R.drawable.ic_tea);
+                imgItem.setImageResource(R.drawable.background_7tea);
             }
         } else {
-            imgItem.setImageResource(R.drawable.ic_tea);
+            imgItem.setImageResource(R.drawable.background_7tea);
         }
         
         // Lưu đường dẫn ảnh hiện tại
@@ -164,7 +164,7 @@ public class UpdateItemActivity extends AppCompatActivity {
                         if (bitmap != null) {
                             imgItem.setImageBitmap(bitmap);
                         } else {
-                            imgItem.setImageResource(R.drawable.ic_tea);
+                            imgItem.setImageResource(R.drawable.background_7tea);
                         }
                     }
                 }

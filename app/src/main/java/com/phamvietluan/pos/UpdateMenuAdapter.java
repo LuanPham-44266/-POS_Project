@@ -85,22 +85,22 @@ public class UpdateMenuAdapter extends BaseAdapter {
                         holder.imgItem.setImageBitmap(bitmap);
                         Log.d("UpdateMenuAdapter", "Hiển thị ảnh đã tối ưu từ: " + imagePath);
                     } else {
-                        holder.imgItem.setImageResource(R.drawable.ic_tea);
+                        holder.imgItem.setImageResource(R.drawable.background_7tea);
                         Log.d("UpdateMenuAdapter", "Không thể tải ảnh tối ưu từ: " + imagePath);
                     }
                 } else {
                     // Nếu file không tồn tại, hiển thị ảnh mặc định
-                    holder.imgItem.setImageResource(R.drawable.ic_tea);
+                    holder.imgItem.setImageResource(R.drawable.background_7tea);
                     Log.d("UpdateMenuAdapter", "File ảnh không tồn tại: " + imagePath);
                 }
             } else {
                 // Nếu không có đường dẫn ảnh, hiển thị ảnh mặc định
-                holder.imgItem.setImageResource(R.drawable.ic_tea);
+                holder.imgItem.setImageResource(R.drawable.background_7tea);
                 Log.d("UpdateMenuAdapter", "Không có đường dẫn ảnh cho " + item.getName());
             }
         } catch (Exception e) {
             // Nếu có lỗi, hiển thị ảnh mặc định
-            holder.imgItem.setImageResource(R.drawable.ic_tea);
+            holder.imgItem.setImageResource(R.drawable.background_7tea);
             Log.e("UpdateMenuAdapter", "Lỗi khi hiển thị ảnh: " + e.getMessage());
         }
 

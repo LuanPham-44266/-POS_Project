@@ -14,7 +14,7 @@
         android:id="@+id/imgItem"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_tea"
+        android:src="@drawable/background_7tea"
         android:scaleType="centerCrop"
         android:layout_marginEnd="16dp"/>
 
