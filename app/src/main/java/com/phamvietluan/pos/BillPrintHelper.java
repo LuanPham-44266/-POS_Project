@@ -109,7 +109,7 @@ public class BillPrintHelper {
                 
                 // Thiết lập thuộc tính in
                 PrintAttributes printAttributes = new PrintAttributes.Builder()
-                        .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                        .setMediaSize(PrintAttributes.MediaSize.ISO_A8)
                         .setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
                         .setResolution(new PrintAttributes.Resolution("pdf", "pdf", 300, 300))
                         .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
